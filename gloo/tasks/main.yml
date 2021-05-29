@@ -1,0 +1,49 @@
+---
+- name: Update apt cache and make sure Vim, Curl and Unzip are installed
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+  loop:
+        - curl
+        - unzip
+
+          #- name: Ensure the Gloo  Namespace exists.
+          #community.kubernetes.k8s:
+          # api_version: v1
+          #kind: Namespace
+          #name: gloo-system
+          # state: present
+
+
+
+
+
+- name: "Run change file permission"
+  command: "file permission"
+  loop:
+           -  chmod +x ~/kubeadm-ansible/gloo/files/file.sh
+           -  chmod +x ~/kubeadm-ansible/gloo/files/script.sh
+
+- name : execute a shell script to install gloo
+  script: script.sh
+  register: abc
+- debug:
+         msg: "{{ abc.stdout_lines }}"  
+
+- name: "Run change file permission"
+  command: "file permission"
+  loop:
+           -  export PATH=$HOME/.gloo/bin:$PATH
+           -  glooctl version
+           -  glooctl upgrade --release v1.6.0
+
+
+
+    
+
+ 
+
+
+
+ 
+

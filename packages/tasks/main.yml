@@ -1,0 +1,28 @@
+---
+- name: Update all packages to their latest version
+  apt:
+    name: "*"
+    state: latest
+- name: Update apt and install packages 
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+  loop:
+        - vim
+        - curl
+        - unzip
+        - python 
+        - python3
+        - python3-docker
+        - python-yaml
+          # - python-pip
+        - python3-pip
+
+- name: Install  python package openshift 
+  pip:
+    name: openshift
+- name: "Run {{ item }}"
+  command: "{{ item }}"
+  loop: 
+    - ansible-galaxy collection install community.kubernetes
+    - ansible-galaxy collection install kubernetes.core

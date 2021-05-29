@@ -1,0 +1,8 @@
+---
+- name: Deploy  chart from local path
+  community.kubernetes.helm:
+    name: test
+    chart_ref: ~/kubeadm-ansible/roles/helm-charts/files/test 
+    release_namespace: test
+    create_namespace: true
+

@@ -1,0 +1,8 @@
+---
+- file:
+    path: script.sh
+    owner: root
+    group: root
+    mode: 0777
+
+- script: script.sh

@@ -1,0 +1,114 @@
+---
+- name: determine available groups
+  getent:
+   database: group
+
+- name: determine available users
+  getent:
+    database: passwd
+
+- name: set group with gid 1900 when not available
+  group:
+    name: docker
+    gid: 1900
+  when:
+    - "'docker' not in ansible_facts.getent_group"
+    - "'1900' not in item.value"
+  loop: "{{ ansible_facts.getent_group | dict2items }}"
+
+- name: set group with gid 2020 when not available
+  group:
+    name: docker
+    gid: 2020
+  when:
+    - "'docker' not in ansible_facts.getent_group"
+    - "'2020' not in item.value"
+  loop: "{{ ansible_facts.getent_group | dict2items }}"
+
+- name: create random number
+  set_fact:
+    random_num: "{{ range(1500, 2000) | random(seed=item) }}"
+  run_once: yes
+  with_items:
+      - string
+
+- name: set group with random gid when 2020 already in use
+  group:
+        name: docker
+        gid: "{{ random_num }}"
+  when:
+        - "'docker' not in ansible_facts.getent_group"
+        - "'2020' in item.value"
+  loop: "{{ ansible_facts.getent_group | dict2items }}"
+
+- name: set fact when docker  exists
+  set_fact:
+        user_exists: true
+  when: '"docker" in item.key'
+  loop: "{{ ansible_facts.getent_passwd | dict2items }}"
+
+- name: set fact when docker  does not exists
+  set_fact:
+        user_exists: false
+  when: '"docker" not in item.key'
+  loop: "{{ ansible_facts.getent_passwd | dict2items }}"
+
+- name: set user with uid 1900, and group docker  when not available
+  user:
+        name: docker 
+        uid: 1900
+        group: docker 
+  when:
+        - not user_exists
+        - "'1900' not in item.value[1]"
+  loop: "{{ ansible_facts.getent_passwd | dict2items }}"
+
+- name: set user with uid 2020, and group docker  when not available
+  user:
+        name: docker
+        uid: 2020
+        group: docker 
+  when:
+        - not user_exists
+        - "'2020' not in item.value[1]"
+  loop: "{{ ansible_facts.getent_passwd | dict2items }}"
+
+- name: set user with random uid, and group docker  when not available
+  user:
+        name: docker 
+        uid: "{{ random_num }}"
+        group: docker 
+  when:
+        - not user_exists
+        - "'2020' in item.value[1]"
+  loop: "{{ ansible_facts.getent_passwd | dict2items }}"
+
+
+
+- name: add root to docker group
+  shell: usermod -a -G docker root
+
+- name: install python dependencies
+  become: true
+  apt:
+       update_cache: yes
+       state: latest
+       name: python3-pip
+
+- name: install 'Docker SDK for Python'
+  pip:
+       name: docker
+       #- name: install 'Docker-py'
+       #pip:
+       #name: docker-py
+
+- name: install 'pyyaml'
+  pip:
+       name: pyyaml
+- name: install 'openshift-client'
+  pip:
+       name: openshift-client
+
+
+
+

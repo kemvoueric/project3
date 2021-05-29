@@ -1,0 +1,9 @@
+---
+- name: Move Kubernetes config file if it exists
+  ansible.builtin.copy:
+    src: /etc/kubernetes/admin.conf
+    dest: $HOME/.kube/config
+    owner: root
+    group: root
+    mode: '0644'
+    backup: yes

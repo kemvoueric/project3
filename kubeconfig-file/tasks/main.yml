@@ -1,0 +1,10 @@
+---
+- name: Copy kubernetes config file
+  ansible.builtin.copy:
+    src: /etc/kubernetes/admin.conf
+    dest: $HOME/.kube/config
+    owner: root
+    group: root
+    mode: '0777'
+- name: change ownership of k8s file
+  shell: chown $(id -u):$(id -g) $HOME/.kube/config

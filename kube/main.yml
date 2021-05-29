@@ -1,0 +1,8 @@
+---
+- name: Create .kube file if it does not exists
+  file:
+     path: $HOME/.kube
+     owner: root
+     group: root
+     mode: 0755
+     state: directory

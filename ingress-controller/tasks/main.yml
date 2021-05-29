@@ -1,0 +1,15 @@
+---
+- name: Change file ownership, group and permissions
+  ansible.builtin.file:
+    path: ~/kubeadm-ansible/roles/ingress-controller/files/script.sh
+    owner: root
+    group: root
+    mode: '0777'
+
+
+
+- name : execute a shell script
+  script: ~/kubeadm-ansible/roles/ingress-controller/files/script.sh
+  register: abc
+- debug:
+    msg: "{{ abc.stdout_lines }}"

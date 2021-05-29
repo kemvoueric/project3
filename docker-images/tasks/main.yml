@@ -1,0 +1,7 @@
+---
+- name: Load image 
+  docker_image:
+    name: ubuntu
+    tag: v1
+    push: no
+    load_path: ~/kubeadm-ansible/roles/docker-images/files/redis.tar
